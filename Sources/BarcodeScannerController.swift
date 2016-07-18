@@ -5,7 +5,7 @@ import AVFoundation
 
 /// Delegate to handle the captured code.
 public protocol BarcodeScannerCodeDelegate: class {
-  func barcodeScanner(controller: BarcodeScannerController, didCapturedCode code: String)
+    func barcodeScanner(controller: BarcodeScannerController, didCapturedCode code: String, type: String)
 }
 
 /// Delegate to report errors.
@@ -422,7 +422,8 @@ extension BarcodeScannerController: AVCaptureMetadataOutputObjectsDelegate {
       guard metadataObjects != nil && !metadataObjects.isEmpty else { return }
 
       guard let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject,
-        code = metadataObj.stringValue
+        code = metadataObj.stringValue,
+        type = metadataObj.type
         where metadata.contains(metadataObj.type) else { return }
 
       if oneTimeSearch {
@@ -430,7 +431,7 @@ extension BarcodeScannerController: AVCaptureMetadataOutputObjectsDelegate {
       }
 
       animateFlash(oneTimeSearch)
-      codeDelegate?.barcodeScanner(self, didCapturedCode: code)
+      codeDelegate?.barcodeScanner(self, didCapturedCode: code, type: type)
   }
 }
 
